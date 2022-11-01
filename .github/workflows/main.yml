@@ -1,4 +1,4 @@
-#test v1.0
+# v1.0
 name: Deploy to Railway And Post Deployment Url To Slack
 on:
  push:
@@ -40,19 +40,6 @@ jobs:
     env:
      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
   
-  # - name: Set Deployment Url
-  #   id: deploymenturl
-  #   run: echo "url=https://cicdassignment-production.up.railway.app/" >> $GITHUB_OUTPUT
-
-  # - name: Get Deployment Url
-  #   run: |
-  #    echo "The selected url is ${{ steps.deploymenturl.outputs.url }}"
-  #    echo "hello"
-  #    echo "https://github.com/${{ github.repository }}.git"
-  #    echo "${{ github.repositoryUrl }}"
-  #    railway variables 
-  #    echo ${{ secrets.DEPLOY_URL }}
-    
   - name: Railway Log Out 
     run: railway logout
     
@@ -125,5 +112,3 @@ jobs:
     env:
      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-  #"text": "*Deployment:*\n${{ steps.deploymenturl.outputs.url }}\n\n*<${{ steps.deploymenturl.outputs.url }}|Open Application>*"
-  #
