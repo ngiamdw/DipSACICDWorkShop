@@ -1,0 +1,127 @@
+name: Deploy to Railway And Post Deployment Url To Slack
+on:
+ push:
+  branches:
+  # Accepts branch v1.0,v15.3,v7.09 
+   - 'v[0-9]+.[0-9]+'
+   # Ignores branch v0.1-beta,v0.1.1,feature-01
+   - '!v[0-9]+.[0-9]+[^0-9]*'
+
+jobs:
+ DeployToRailwayAndNotifySlack:
+  #Commit msg must not start wtih #NORUN, if not job is skipped
+  if: ${{ !startsWith(github.event.head_commit.message, '#NORUN') }} 
+  runs-on: ubuntu-latest
+  
+  steps:
+  - name: Checkout
+    uses: actions/checkout@v3   
+
+  - name: Use Node 18
+    uses: actions/setup-node@v3
+    with:
+     node-version: '18'
+
+  - name: Install packages
+    run: yarn install --frozen-lockfile
+
+  - name: Install Railway
+    run: yarn global add @railway/cli
+
+  - name: Login to RailWay
+    run: railway login --browserless
+
+  - name: Link Railway Project
+    run: railway link 07a5486f-6805-4038-b632-c403d569791f
+    
+  - name: Deploy to Existing Service in Project
+    run: railway up --service CICDAssignment
+    env:
+     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  
+  # - name: Set Deployment Url
+  #   id: deploymenturl
+  #   run: echo "url=https://cicdassignment-production.up.railway.app/" >> $GITHUB_OUTPUT
+
+  # - name: Get Deployment Url
+  #   run: |
+  #    echo "The selected url is ${{ steps.deploymenturl.outputs.url }}"
+  #    echo "hello"
+  #    echo "https://github.com/${{ github.repository }}.git"
+  #    echo "${{ github.repositoryUrl }}"
+  #    railway variables 
+  #    echo ${{ secrets.DEPLOY_URL }}
+    
+  - name: Railway Log Out 
+    run: railway logout
+    
+  - name: Create a Github Release named as branchname that triggered pipeline
+    uses: elgohr/Github-Release-Action@v4
+    env:
+      GITHUB_TOKEN: ${{ secrets.CREATE_RELEASE_TOKEN }}
+    with:
+      title: ${{ github.ref_name }}
+
+  - name: Send custom JSON data to Slack workflow
+    id: slack
+    uses: slackapi/slack-github-action@v1.23.0
+    with:
+     payload: |
+      {
+        "blocks": [
+          {
+            "type": "section",
+            "text": {
+              "text": "*DipSA55 CI/CD Assignment Submission*",
+              "type": "mrkdwn"
+            },
+            "fields": [
+              {
+                "type": "mrkdwn",
+                "text": "*Name:*"
+              },
+              {
+                "type": "mrkdwn",
+                "text": "*Matriculation:*"
+              },
+              {
+                "type": "plain_text",
+                "text": "Ngiam De Wei"
+              },
+              {
+                "type": "plain_text",
+                "text": "A0147606A"
+              },
+              {
+                "type": "mrkdwn",
+                "text": "*Email:*"
+              },
+              {
+                "type": "mrkdwn",
+                "text": "*Repository:*"
+              },
+              {
+                "type": "plain_text",
+                "text": "e0012232@u.nus.edu"
+              },
+              {
+                "type": "mrkdwn",
+                "text": "https://github.com/${{ github.repository }}.git"
+              }
+            ]
+          },
+          {
+            "type": "section",
+            "fields": [
+              {
+                "type": "mrkdwn",
+                "text": "*Deployment:*\n${{ secrets.DEPLOY_URL }}\n\n*<${{ secrets.DEPLOY_URL }}|Open Application>*"
+              }
+            ]
+          }
+        ]
+      }
+    env:
+     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+     SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  #"text": "*Deployment:*\n${{ steps.deploymenturl.outputs.url }}\n\n*<${{ steps.deploymenturl.outputs.url }}|Open Application>*"
