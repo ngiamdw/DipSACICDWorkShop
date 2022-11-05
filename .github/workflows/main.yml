@@ -89,7 +89,7 @@ jobs:
                 "text": "*Repository:*"
               },
               {
-                "type": "plain_text",
+                "type": "mrkdwn",
                 "text": "<mailto:e0012232@u.nus.edu|e0012232@u.nus.edu>"
               },
               {
