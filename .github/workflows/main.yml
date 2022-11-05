@@ -2,7 +2,7 @@ name: Deploy to Railway And Post Deployment Url To Slack
 on:
  push:
   branches:
-  # Accepts branch v1.0,v15.3,v7.09 
+  # Accepts branch v1.0,v15.3,v7.09,v7.04,v1.5
    - 'v[0-9]+.[0-9]+'
    # Ignores branch v0.1-beta,v0.1.1,feature-01
    - '!v[0-9]+.[0-9]+[^0-9]*'
