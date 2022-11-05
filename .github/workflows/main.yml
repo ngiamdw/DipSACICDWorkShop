@@ -1,4 +1,4 @@
-# railway test4
+# modified slack formatting msg
 name: Deploy to Railway And Post Deployment Url To Slack
 on:
  push:
@@ -90,7 +90,7 @@ jobs:
               },
               {
                 "type": "plain_text",
-                "text": "e0012232@u.nus.edu"
+                "text": "<mailto:e0012232@u.nus.edu|e0012232@u.nus.edu>"
               },
               {
                 "type": "mrkdwn",
