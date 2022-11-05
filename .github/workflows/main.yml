@@ -18,7 +18,7 @@ jobs:
   - name: Checkout
     uses: actions/checkout@v3   
 
-  - name: Use Node 18
+  - name: Set-up Node 18
     uses: actions/setup-node@v3
     with:
      node-version: '18'
@@ -110,5 +110,5 @@ jobs:
         ]
       }
     env:
-     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
      SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
