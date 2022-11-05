@@ -33,7 +33,7 @@ jobs:
     run: railway login --browserless
 
   - name: Link Railway Project
-    run: railway link 07a5486f-6805-4038-b632-c403d569791f
+    run: railway link ${{ secrets.RAILWAY_PROJECT_ID }}
     
   - name: Deploy to Existing Service in Project
     run: railway up --service CICDAssignment
